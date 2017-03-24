@@ -39,7 +39,7 @@
     <xsl:for-each-group select="$who" group-starting-with="xsw:div[@level=$level]">
       <xsl:choose>
         <!-- It's possible for a level to be skipped, creating no section -->
-        <xsl:when test="not(current-group()/self::xsw:div/@level=$level)">
+        <xsl:when test="@level > $level">
             <xsl:call-template name="section-assembly">
               <xsl:with-param name="who" select="$who"/>
               <xsl:with-param name="level" select="$level + 1"/>
