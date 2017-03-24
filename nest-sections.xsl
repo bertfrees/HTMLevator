@@ -40,7 +40,7 @@
     <!-- When $who goes empty the template will fall through -->
     <xsl:for-each-group select="$who" group-starting-with="xsw:div[@level=$level]">
       <xsl:choose>
-        <xsl:when test="$level = 0">
+        <xsl:when test="@level = 0">
           <!-- level 0 gets no section in any case. -->
           <xsl:apply-templates select="."/>
           <xsl:call-template name="section-assembly">
