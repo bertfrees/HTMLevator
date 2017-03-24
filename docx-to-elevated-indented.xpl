@@ -27,6 +27,9 @@
   <p:output port="_DB_ARRANGED">
     <p:pipe port="_B_ARRANGED" step="html-elevated"/>
   </p:output>
+  <p:output port="_DC_FINISHED">
+    <p:pipe port="_C_FINISHED" step="html-elevated"/>
+  </p:output>
   <p:output port="_DZ_ELEVATED">
     <p:pipe port="_Z_FINAL" step="html-elevated"/>
   </p:output>
@@ -37,6 +40,7 @@
   <p:serialization port="_C_RINSED"           indent="true" omit-xml-declaration="true"/>
   <p:serialization port="_DA_SECTIONED"       indent="true" omit-xml-declaration="true"/>
   <p:serialization port="_DB_ARRANGED"        indent="true" omit-xml-declaration="true"/>
+  <p:serialization port="_DC_FINISHED"        indent="true" omit-xml-declaration="true"/>
   <p:serialization port="_DZ_ELEVATED"        indent="true" omit-xml-declaration="true"/>
   
   <!--<p:import href="docx-extract/docx-document-production.xpl"/>-->
@@ -64,8 +68,14 @@
     </p:input>
   </p:xslt>
   
+  <p:xslt name="css-abstracted">
+    <p:input port="stylesheet">
+      <p:document href="../XSweet/applications/css-abstract/css-abstract.xsl"/>
+    </p:input>
+  </p:xslt>
+  
   <xsw:xsweet-elevation-filter name="html-elevated"/>
- 
+  
   <p:identity name="final"/>
   
  

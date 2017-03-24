@@ -25,6 +25,10 @@
     <p:pipe port="result" step="sections-nested"/>
   </p:output>
   
+  <p:output port="_C_FINISHED" primary="false">
+    <p:pipe port="result" step="sections-nested"/>
+  </p:output>
+  
   <p:serialization port="_Z_FINAL" indent="true" omit-xml-declaration="true"/>
   
   <!-- Break apart sections at h1-h6 boundaries.
@@ -46,7 +50,7 @@
     </p:input>
   </p:xslt>
   
-  <p:xslt name="cleanup">
+  <!--<p:xslt name="cleanup">
     <p:input port="stylesheet">
       <p:inline>
         <xsl:stylesheet version="2.0"
@@ -69,7 +73,14 @@
       </p:inline>
       
     </p:input>
+  </p:xslt>-->
+  
+  <p:xslt name="finished">
+    <p:input port="stylesheet">
+      <p:document href="scratch-cleanup.xsl"/>
+    </p:input>
   </p:xslt>
+  
   
   <p:identity name="final"/>
 
