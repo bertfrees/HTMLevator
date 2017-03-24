@@ -36,20 +36,33 @@
          They should all be xsw:div as provided in the previous step. --> 
     <xsl:param name="who" select="child::*" as="element(xsw:div)*"/>
     <xsl:param name="level" select="0"/>
+    
+    <!-- When $who goes empty the template will fall through -->
     <xsl:for-each-group select="$who" group-starting-with="xsw:div[@level=$level]">
       <xsl:choose>
-        <!-- It's possible for a level to be skipped, creating no section -->
-        <xsl:when test="@level > $level">
-            <xsl:call-template name="section-assembly">
-              <xsl:with-param name="who" select="$who"/>
-              <xsl:with-param name="level" select="$level + 1"/>
-            </xsl:call-template>
+        <xsl:when test="$level = 0">
+          <!-- level 0 gets no section in any case. -->
+          <xsl:apply-templates select="."/>
+          <xsl:call-template name="section-assembly">
+            <xsl:with-param name="who" select="current-group() except ."/>
+            <xsl:with-param name="level" select="$level + 1"/>
+          </xsl:call-template>
         </xsl:when>
+        <!-- If the first group in the section belongs in a deeper level, we descend until we get
+             the correct level, without making sections.
+             Because we have grouped with starting-with in earlier calls of this recursive template,
+             we'll never have higher-level tz:div in a group only a lower level (when levels are skipped). -->
+        <xsl:when test="@level > $level">
+          <xsl:call-template name="section-assembly">
+            <xsl:with-param name="who" select="$who"/>
+            <xsl:with-param name="level" select="$level + 1"/>
+          </xsl:call-template>
+        </xsl:when>
+        <!-- Otherwise is the normal case: we are deeper than level 0, and produce a section wrapper. -->
         <xsl:otherwise>
           <section>
             <xsl:apply-templates select="."/>
             <xsl:call-template name="section-assembly">
-              <!-- Notice when $who becomes empty the template will fall through -->
               <xsl:with-param name="who" select="current-group() except ."/>
               <xsl:with-param name="level" select="$level + 1"/>
             </xsl:call-template>
