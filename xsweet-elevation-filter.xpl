@@ -29,6 +29,9 @@
     <p:pipe port="result" step="sections-nested"/>
   </p:output>
   
+  <p:serialization port="_A_SECTIONED" indent="true" omit-xml-declaration="true"/>
+  <p:serialization port="_B_ARRANGED" indent="true" omit-xml-declaration="true"/>
+  <p:serialization port="_C_FINISHED" indent="true" omit-xml-declaration="true"/>
   <p:serialization port="_Z_FINAL" indent="true" omit-xml-declaration="true"/>
   
   <!-- Break apart sections at h1-h6 boundaries.

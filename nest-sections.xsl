@@ -16,59 +16,61 @@
     </xsl:copy>
   </xsl:template>
   
-  <xsl:template match="div[@class='docx-body']">
-    <xsl:copy copy-namespaces="no">
-      <xsl:copy-of select="@*"/>
+  <xsl:template match="xsw:sequence">
+    <!-- $zero is the zero-level group, when present.
+         (Some sequences begin with elements before a header; these are grouped in xsw:group[@level=0]-->
+    <xsl:variable name="zero" select="xsw:group[@level = 0]"/>
+
+    <!-- We want the content of zero but w/o a section wrapper. -->
+    <xsl:apply-templates select="$zero"/>
+    <!-- We want section wrappers for anything remaining. -->
     <xsl:call-template name="section-assembly">
-      <!-- FOR DEBUGGING WHEN WE ENTER, $who should be select="*" level="0"     -->
-      <!--<xsl:with-param name="who" select="$grouped"/>-->
+      <xsl:with-param name="who" select="xsw:group except $zero"/>
     </xsl:call-template>
-    </xsl:copy>
+
   </xsl:template>
   
-  <xsl:template match="xsw:*">
+  <!-- Groups can be unwrapped since the induced section structure takes care of everything. -->
+  <xsl:template match="xsw:group">
     <xsl:apply-templates/>
   </xsl:template>
   
   <xsl:template name="section-assembly">
-    <!-- $who is a run of one or more contiguous siblings -->
-    <!-- When we enter we operate on all child elements of the context.
-         They should all be xsw:div as provided in the previous step. --> 
-    <xsl:param name="who" select="child::*" as="element(xsw:div)*"/>
-    <xsl:param name="level" select="0"/>
+    <!-- $who is a run of one or more contiguous siblings.
+         When $who is empty we fall through so recursion is safe as long as $who is reduced. -->
+    <!-- When we enter we operate on all xsw:group child elements of the context except level 0.
+         All children should be xsw:group as provided in the previous step. --> 
+    <xsl:param name="who"   required="yes" as="element(xsw:group)*"/>
+    <xsl:param name="level" select="1"     as="xs:integer"/>
     
-    <!-- When $who goes empty the template will fall through -->
-    <xsl:for-each-group select="$who" group-starting-with="xsw:div[@level=$level]">
-      <xsl:choose>
-        <xsl:when test="@level = 0">
-          <!-- level 0 gets no section in any case. -->
-          <xsl:apply-templates select="."/>
+    <xsl:for-each-group select="$who" group-starting-with="xsw:group[@level = $level]">
+      <!-- Since we group-starting-with, we will have a single $me at most.
+           Either this group belongs at this level - exists($me) -
+           or it belongs deeper - empty($me) - which happens when levels are skipped
+           (e.g. an h4 appears without an h3 giving us a group[@level=4] inside a group[@level=2].) -->
+      <xsl:variable name="me" select="current-group()[@level = $level]"/>
+      
+      <!-- When $empty(me) the group is passed in again at the next deeper level,
+           without making a section here. -->
+      <xsl:call-template name="section-assembly">
+        <xsl:with-param name="who" select="current-group()[empty($me)]"/>
+        <xsl:with-param name="level" select="$level + 1"/>
+      </xsl:call-template>
+
+      <!-- $me exists when the group is on the right level. -->
+      <xsl:if test="exists($me)">
+        <section>
+          <!-- Now we emit the contents of the group, unwrapped. -->
+          <xsl:apply-templates select="$me"/>
+          <!-- Next we subgroup the remaining groups within the section created for $me.-->
+          <!-- Note the new $who is empty when $me is the only group left. -->
           <xsl:call-template name="section-assembly">
-            <xsl:with-param name="who" select="current-group() except ."/>
+            <xsl:with-param name="who" select="current-group() except $me"/>
             <xsl:with-param name="level" select="$level + 1"/>
           </xsl:call-template>
-        </xsl:when>
-        <!-- If the first group in the section belongs in a deeper level, we descend until we get
-             the correct level, without making sections.
-             Because we have grouped with starting-with in earlier calls of this recursive template,
-             we'll never have higher-level tz:div in a group only a lower level (when levels are skipped). -->
-        <xsl:when test="@level > $level">
-          <xsl:call-template name="section-assembly">
-            <xsl:with-param name="who" select="$who"/>
-            <xsl:with-param name="level" select="$level + 1"/>
-          </xsl:call-template>
-        </xsl:when>
-        <!-- Otherwise is the normal case: we are deeper than level 0, and produce a section wrapper. -->
-        <xsl:otherwise>
-          <section>
-            <xsl:apply-templates select="."/>
-            <xsl:call-template name="section-assembly">
-              <xsl:with-param name="who" select="current-group() except ."/>
-              <xsl:with-param name="level" select="$level + 1"/>
-            </xsl:call-template>
-          </section>
-        </xsl:otherwise>
-      </xsl:choose>
+        </section>
+      </xsl:if>
     </xsl:for-each-group>
   </xsl:template>
+  
 </xsl:stylesheet>

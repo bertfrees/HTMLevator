@@ -16,18 +16,19 @@
     </xsl:copy>
   </xsl:template>
   
-  <xsl:template match="div[@class='docx-body']">
+  <xsl:template match="div[@class='docx-body'] | section">
     <xsl:copy>
       <xsl:apply-templates select="@*"/>
-      <xsl:for-each-group select="*" group-starting-with="h1|h2|h3|h4|h5|h6">
+      <xsw:sequence>
+        <xsl:for-each-group select="*" group-starting-with="h1|h2|h3|h4|h5|h6">
         <!-- Remember . is current-group()[1], so $leader is the header (when found) -->
         <xsl:variable name="leader" select="self::h1|self::h2|self::h3|self::h4|self::h5|self::h6"/>
-        <!-- data-sec-level is X for hX, 0 if no h1-h6 leads.  -->
-        <xsw:div level="{($leader/replace(local-name(),'\D',''),'0')[1]}">
+        <!-- group/@level is X for hX, 0 if there is no leader.  -->
+        <xsw:group level="{($leader/replace(local-name(),'\D',''),0)[1]}">
           <xsl:apply-templates select="current-group()"/>
-        </xsw:div>
+        </xsw:group>
       </xsl:for-each-group>
-      
+      </xsw:sequence>
     </xsl:copy>
   </xsl:template>
   
