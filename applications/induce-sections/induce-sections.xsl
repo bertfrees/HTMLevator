@@ -20,11 +20,14 @@
   
   <!--<xsl:template match="body/div[xsw:has-regular-order(h1|h2|h3|h4|h5|h6) or true()]">-->
   <xsl:template match="body/div[@class='docx-body']">
-      <xsl:variable name="sequenced">
+    <xsl:variable name="sequenced">
       <xsl:call-template name="sequence-by-headers"/>
     </xsl:variable>
     <xsl:copy>
       <xsl:apply-templates select="@*"/>
+      <xsl:if test="not(xsw:has-regular-order(h1|h2|h3|h4|h5|h6))">
+        <xsl:comment expand-text="true"> Headers out of regular order: { string-join((h1|h2|h3|h4|h5|h6)/name(), ', ') }</xsl:comment>
+      </xsl:if>
       <xsl:apply-templates select="$sequenced/xsw:sequence"/>
     </xsl:copy>
   </xsl:template>
