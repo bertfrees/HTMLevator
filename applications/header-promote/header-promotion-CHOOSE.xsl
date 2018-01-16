@@ -27,7 +27,7 @@ declare namespace xsw ="http://coko.foundation/xsweet";
 <!-- $method can be provided at runtime
      recognized values:
   method='outline-level' infers based on outline level numbering in the Word data
-  method='rank-format'   tries to assign header levels based on paragraph-level properties (format)
+  method='ranked-format'   tries to assign header levels based on paragraph-level properties (format)
   or: anyURI will point to anyURI as the source for a mapping specification
     e.g. method="styles-mapping.xml" will use 'styles-mapping.xml' as the mapping file.
   
@@ -40,15 +40,10 @@ declare namespace xsw ="http://coko.foundation/xsweet";
 <!-- $override $method at runtime. Values:
      *.xml is treated as regex mapping document to follow
      or 'outline-level' if by outline level
-     or 'rank-format' if by property set
+     or 'ranked-format' if by ranking property sets on paragraphs
      if two outline levels are found, outline level is used otherwise property sets are used
-     Specify method='rank-format' to be sure it is used -->
- <xsl:param name="method" as="xs:string">
-   <xsl:choose>
-     <xsl:when test="$outlined">outline-level</xsl:when>
-     <xsl:otherwise>rank-format</xsl:otherwise>
-   </xsl:choose>  
- </xsl:param>
+     Specify method='ranked-format' to be sure it is used -->
+ <xsl:param name="method" as="xs:string">default</xsl:param>
  
  <!-- $mapping-spec provides the name of an XML document found at location on $method e.g. method='my-mapping.xml' -->
  <!-- if there is no such document it is empty -->
@@ -74,12 +69,21 @@ declare namespace xsw ="http://coko.foundation/xsweet";
         <xsw:transform>outline-headers.xsl</xsw:transform>
         <xsw:annotate> header promotion by outline levels (as called) </xsw:annotate>
       </xsl:when>
-      <xsl:when test="not($method = 'rank-format') and $outlined">
+      <xsl:when test="$method = 'ranked-format'">
+        <xsw:transform>
+          <xsw:produce-xslt>
+            <xsw:transform>digest-paragraphs.xsl</xsw:transform>
+            <xsw:transform>make-header-escalator-xslt.xsl</xsw:transform>
+          </xsw:produce-xslt>
+        </xsw:transform>
+        <xsw:annotate> header promotion by ranking paragraph formatting (as called) </xsw:annotate>
+      </xsl:when>
+      <xsl:when test="$outlined">
         <xsw:transform>outline-headers.xsl</xsw:transform>
         <xsw:annotate> header promotion by outline levels (by default) </xsw:annotate>
       </xsl:when>
       <xsl:otherwise>
-        <!--<xsw:transform>digest-paragraphs.xsl</xsw:transform>-->
+        <!-- value is either 'default' or something else not recognized or a file name -->
         <xsw:transform>
           <xsw:produce-xslt>
             <xsw:transform>digest-paragraphs.xsl</xsw:transform>
