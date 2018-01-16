@@ -45,7 +45,7 @@
     </p:input>
   </p:xslt>
 
-  <!-- This is the loop! where we apply the stylesheet we have generated -->
+  <!-- We apply the stylesheet we have generated to the original doc -->
   <p:xslt name="apply-the-header-mapping-xslt">
     <p:input port="source">
       <p:pipe port="result" step="in"/>

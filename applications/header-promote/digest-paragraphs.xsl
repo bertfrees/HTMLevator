@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet version="3.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsw="http://coko.foundation/xsweet"
-  xmlns="http://www.w3.org/1999/xhtml" xpath-default-namespace="http://www.w3.org/1999/xhtml"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xpath-default-namespace="http://www.w3.org/1999/xhtml"
   exclude-result-prefixes="#all">
 
   <!-- Indent should really be no, but for testing. -->
@@ -39,10 +40,12 @@
 
   <!--<xsl:param name="form" as="xs:string">xslt</xsl:param>-->
 
-
+  
+  
   <xsl:variable name="varName" select="tokenize(@style, '\s*;\s*')"/>
   <xsl:template match="/*">
     <body>
+      <!--<xsl:copy-of select="//body/*"/>-->
       <div class="grouped">
         <!-- delivers remaining $p-proxies in groups assigning them to header levels (by order) -->
         <xsl:copy-of select="$p-proxies-grouped"/>
@@ -66,13 +69,16 @@
 
     </body>
   </xsl:template>
-
+  
+  <xsl:variable name="matching-ps" select="//div[@class = 'docx-body']//p[matches(string(.),'\S')] except (//table//p | //li//p)"/>
+    
 <!-- Step 1. Deliver proxies for paragraphs, considered as candidates for header promotion. -->
   <xsl:variable name="p-proxies">
     <!-- Only paragraphs with contents are examined for header promotion.
          matches(string(.),'\S') is true iff non-ws content is present. -->
-    <xsl:variable name="matching-ps" select="//div[@class = 'docx-body']/p[matches(string(.),'\S')] except (//table//p | //li//p)"/>
     <xsl:apply-templates select="$matching-ps" mode="digest"/>
+    <!--<xsl:copy-of select="//p"/>-->
+    <!--<xsl:sequence select="$matching-ps"/>-->
   </xsl:variable>
 
   <!-- Mode 'digest' is the initial (first) pass over the document, which boils down all paragraph-level

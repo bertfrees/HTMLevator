@@ -9,7 +9,6 @@
   exclude-result-prefixes="#all"
   version="3.0">
   
-  
   <xsl:output method="xml" indent="yes" omit-xml-declaration="yes"/>
   
   <xsl:template match="node() | @*">

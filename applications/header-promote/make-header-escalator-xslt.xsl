@@ -52,7 +52,8 @@
       </xsw:template>
 
       <xsl:apply-templates select="div[@class='grouped']/div[@class='hX']/*" mode="xslt-produce"/>
-
+      <!--<xsl:apply-templates mode="xslt-produce" select="$p-proxies-grouped/*"/>-->
+      
       <xsl:if test="not($debug-mode='silent')">
       <xsw:variable name="in">
         <xsl:copy-of select="div"/>
@@ -62,6 +63,8 @@
     </xsw:stylesheet>
   </xsl:template>
 
+  <!--<xsl:include href="digest-paragraphs.xsl"/>-->
+  
   <!-- Template writes XSLT templates  -->
 
   <xsl:template match="div[@class='hX']/*" mode="xslt-produce">
