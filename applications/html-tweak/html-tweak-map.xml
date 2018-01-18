@@ -5,6 +5,12 @@
     <remove><class>Default</class></remove>
   </where>
   <where>
+    <match><class>Heading2</class></match>
+    <remove><class>Heading2</class></remove>
+    <add><class>HeadingZwo</class></add>
+    
+  </where>
+  <where>
     <match><style>margin-bottom</style></match>
     <remove><style>margin-bottom</style></remove>
   </where>

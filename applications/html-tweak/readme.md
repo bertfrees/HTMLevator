@@ -2,6 +2,18 @@
 
 XSLT pipeline for ad hoc HTML enhancement via 'class' and 'style' (property) mapping.
 
+The simplest way to run HTML Tweak under XSLT 3.0 is to call the stylesheet `APPLY-html-tweaks.xsl` to your HTML file, with a runtime parameter `config` set to point to your HTML tweak configuration file.
+
+For example: > XSLT my-source.html APPLY-html-tweaks.xsl config=my-set-of-html-tweaks.xml
+
+Internally, this stylesheet performs this operations (which you can also emulate for debugging or to run under XSLT 2.0):
+
+* Reads the tweak configuration file given, such as `html-tweak-map.xml`. (It can be named anything.)
+
+* Run an XSLT stylesheet on this file to produce a stylesheet.
+
+* Run this XSLT on your HTML to apply the "HTML Tweaks" your configuration has indicated
+
 Declare your mapping in a simple XML file and XSLT will apply it to your HTML file, creating a new (modified) HTML file with the appropriate properties rearranged.
 
 To do this, HTML Tweak uses a little mapping language. It establishes matches between categories of elements (ordinarily they will be `p` or `span` elements in your HTML, or what have you) as indicated by CSS property or CSS property-value (on a `@style` attribute) or a simple class name on a `@class` attribute.
