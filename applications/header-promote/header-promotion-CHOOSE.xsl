@@ -48,13 +48,25 @@ declare namespace xsw ="http://coko.foundation/xsweet";
 
   <xsl:variable name="outlined" select="count(p[matches(@style, 'xsweet-outline-level')]) gt 1"/>
 
+<!--XSweet mini-pipelining-language semantics:
+
+  xsw:produce returns a document, either
+    An XML file at the given location, or
+    A result of a sequence of operations (productions and transformations)
+  xsw:transform returns a document, the result of a transformation
+    using the previous step as main input
+    and the contents of the xsw:transform as an XSLT transformation
+      (this needs to be either a URI pointing to a stylesheet, or a single xsw:produce or xsw:transform producing an XSLT; no error trapping here)
+  xsw:annotate returns a document, a copy of the input document stamped with an annotation
+-->
+
   <xsl:variable name="transformation-sequence" expand-text="true">
     <xsw:produce>
       <xsl:choose>
         <xsl:when test="exists($mapping-spec)">
           <!-- if a mapping spec exists, we produce a tranformation from it ...      -->
           <xsw:transform>
-            <!-- The sequence child produces a stylesheet, which is applied -->
+            <!-- We produce a stylesheet, which is applied -->
             <xsw:produce>
               <!-- xsw:produce with string value returns the parsed XML file at that location.
                    Here the mapping spec replaces the main source as input for this subpipeline -->
@@ -79,7 +91,7 @@ declare namespace xsw ="http://coko.foundation/xsweet";
         </xsl:when>
         <xsl:when test="$outlined">
           <xsw:transform>outline-headers.xsl</xsw:transform>
-          <xsw:annotate> header promotion by outline levels (by default) </xsw:annotate>
+          <xsw:annotate> header promotion by outline levels (by default, from detected outline levels ) </xsw:annotate>
         </xsl:when>
         <xsl:otherwise>
           <!-- value is either 'default' or something else not recognized or a file name -->
@@ -92,6 +104,7 @@ declare namespace xsw ="http://coko.foundation/xsweet";
           <xsw:annotate> header promotion by dynamic ranking of paragraph formatting (fingers crossed) </xsw:annotate>
         </xsl:otherwise>
       </xsl:choose>
+      <xsw:annotate> touched by header promotion logic: { current-date() }</xsw:annotate>
     </xsw:produce>
     <!--  <xsw:transform>collapse-paragraphs.xsl</xsw:transform>-->
   </xsl:variable>
@@ -105,26 +118,21 @@ declare namespace xsw ="http://coko.foundation/xsweet";
   <xsl:template match="/" name="entry">
     <xsl:variable name="source" select="."/>
     <xsl:apply-templates select="$transformation-sequence/xsw:produce">
-      <xsl:with-param name="sourcedoc" select="."/>
+      <xsl:with-param tunnel="yes" name="sourcedoc" select="."/>
     </xsl:apply-templates>
-  </xsl:template>
-
-  <!-- Text only value is taken to be a (relative) URL; XML at that location is produced. -->
-  <xsl:template match="xsw:produce[matches(string(.), '\S') and empty(*)]">
-    <xsl:sequence select="document(.)"/>
   </xsl:template>
 
   <!-- When it has elements, xsw:produce-xslt is a pipeline or subpipeline producing the results of a sequence
        of operations ... -->
-  <xsl:template match="xsw:produce[exists(*)]">
-    <xsl:param name="sourcedoc" as="document-node()"/>
-    <xsl:iterate select="*">
-      <xsl:param name="sourcedoc" select="$sourcedoc" as="document-node()"/>
-      <xsl:on-completion select="$sourcedoc"/>
+  <xsl:template match="xsw:produce">
+    <xsl:param tunnel="yes" name="sourcedoc" as="document-node()"/>
+    <xsl:iterate select="text() | *">
+      <xsl:param name="doc" select="$sourcedoc" as="document-node()"/>
+      <xsl:on-completion select="$doc"/>
       <xsl:next-iteration>
-        <xsl:with-param name="sourcedoc">
+        <xsl:with-param name="doc">
           <xsl:apply-templates select=".">
-            <xsl:with-param name="sourcedoc" select="$sourcedoc"/>
+            <xsl:with-param name="sourcedoc" tunnel="yes" select="$doc"/>
           </xsl:apply-templates>
         </xsl:with-param>
       </xsl:next-iteration>
@@ -134,19 +142,10 @@ declare namespace xsw ="http://coko.foundation/xsweet";
   <!-- When xsl:transform has xsw:produce, the produced document is taken to be a stylesheet
        to be applied to the input -->
   <xsl:template match="xsw:transform">
-    <xsl:param name="sourcedoc" as="document-node()"/>
+    <xsl:param tunnel="yes" name="sourcedoc" as="document-node()"/>
     <xsl:variable name="xslt" as="document-node()">
-      <xsl:choose>
-        <!-- xsw:transform with text is short for xsw:transform/xsw:produce with text -->
-        <xsl:when test="empty(*) and matches(.,'\S')">
-          <xsl:sequence select="document(.)"/>
-        </xsl:when>
-        <xsl:otherwise>
-          <xsl:apply-templates select="xsw:produce">
-            <xsl:with-param name="sourcedoc" select="$sourcedoc"/>
-          </xsl:apply-templates>
-        </xsl:otherwise>
-      </xsl:choose>
+      <!-- either a text node, or more production, or a transformation ... -->
+      <xsl:apply-templates/>
     </xsl:variable>
 
     <!--<xsl:copy-of select="$xslt"/>-->
@@ -163,17 +162,23 @@ declare namespace xsw ="http://coko.foundation/xsweet";
 
   </xsl:template>
 
-
-  <!-- Not knowing any better, we simply pass along. -->
-  <xsl:template match="*">
-    <xsl:param name="sourcedoc" as="document-node()"/>
-    <xsl:sequence select="$sourcedoc"/>
-  </xsl:template>
-
   <xsl:template match="xsw:annotate">
-    <xsl:param name="sourcedoc" as="document-node()"/>
-    <xsl:processing-instruction expand-text="true" name="xsweet">{ . }</xsl:processing-instruction>
-    <xsl:text>&#xA;</xsl:text>
+    <xsl:param tunnel="yes" name="sourcedoc" as="document-node()"/>
+    <xsl:document>
+      <xsl:processing-instruction expand-text="true" name="xsweet">{ . }</xsl:processing-instruction>
+      <xsl:text>&#xA;</xsl:text>
+      <xsl:sequence select="$sourcedoc"/>
+    </xsl:document>
+  </xsl:template>
+  
+  <!-- Text only value is taken to be a (relative) URL; XML at that location is produced. -->
+  <xsl:template match="text()[. castable as xs:anyURI]">
+    <xsl:sequence select="document(.)"/>
+  </xsl:template>
+  
+  <!-- Not knowing any better, we simply pass along. -->
+  <xsl:template match="node()">
+    <xsl:param tunnel="yes" name="sourcedoc" as="document-node()"/>
     <xsl:sequence select="$sourcedoc"/>
   </xsl:template>
 
