@@ -1,20 +1,20 @@
 # XSweet Header Promotion
 
-Processing XML in the XHTML namespace, producing the same format, except with h1-h6 where headers should be.
+Processing XML in the XHTML namespace, producing the same format, except with `h1-h6` where headers should be.
 
 ## Overview
 
-XSweet supports three methods of header promotion. They can be used separately, but of the three only one (outline-level based) is a straightforward transformation: the others both have complications. To make things easier, all this logic is wrapped in a single "header promotion" XSLT, which can choose the best available method -- or an override switch permitting you to configure it.
+XSweet supports three methods of header promotion, i.e. inferring which lines of text (nominal paragraphs) are candidated for promotion into HTML headers (`h1-h6` elements). Of the three methods, however only one (outline-level based) is a straightforward transformation: the other  higher level tranformations (invoking stylesheets generated dynamically). Accordingly, to make things easier, all this logic is wrapped in a single "header promotion" XSLT, which can choose the best available method and then orchestrate the transformations necessary to accomplish it. Alternatively, you can use a runtime switch to set the header promotion method.
 
-The processes can also (each) be run separately or discretely, for debugging, although typically they will also produce intermediate results (outputs) that may have to be managed.
+For debugging, each of these processes can also be run separately or discretely, although typically they will also produce intermediate results (outputs) that may have to be managed.
 
-The problem addressed by this transformation is worse than non-trivial: it is *sometimes* (relatively) trivial but it is also frequently quite difficult or impossible to do unassisted or programmatically. It is also typically difficult or impossible to tell in advance which category a particular word processor document will fall into, sight unseen. The transformation itself may not always be difficult; but the contexts that determine what is 'good' and 'correct' for given inputs, are complex.
+The problem addressed by this transformation is worse than non-trivial: it is *sometimes* (relatively) trivial to infer headers but it is also frequently quite difficult or impossible to do so, unassisted or programmatically. It is also typically difficult or impossible to tell in advance which category a particular word processor document will fall into, sight unseen. The transformation itself may not always be difficult; but the contexts that determine what is 'good' and 'correct' for given inputs, are complex.
 
 These complexities are reflected in the (three) ways XSweet supports producing HTML headers, in the flat series of "one paragraph after another" that results from straight-up conversion of WordML inputs, into markup.
 
 ## Configuration
 
-The "master stylesheet: is `header-promotion-CHOOSE.xsl`. Using it plus a single runtime parameter setting, you can designate the header promotion strategy you prefer. If you fail to designate one, that is also okay, the XSLT will do its best.
+The master stylesheet: is `header-promotion-CHOOSE.xsl`. Using it plus a single runtime parameter setting, you can designate the header promotion strategy you prefer. If you fail to designate one, that is also okay, the XSLT will do its best.
 
 The flag (runtime parameter) is called `method` with any of three values recognized:
 
@@ -24,9 +24,9 @@ The flag (runtime parameter) is called `method` with any of three values recogni
 
  * `method=my-styles.xml` indicates headers will be mapped (assigned to paragraphs) on the basis of assigned styles and/or contents, matching with regular expressions, as indicated in a configuration file. `my-styles.xml` will be a configuration file you borrow or create for mappings, which recognizes the styles you designate. Either named styles in Word (which result in `@class` in HTML produced by XSweet), or contents (such as a paragraph whose only contents is "Introduction"), may be matched.
 
-Note: this feature can be combined with [../html-tweak](html-tweak) as a pre-process to map not only styles, but also patterns of formatting appearing in the HTML, into named and classed elements in an enriched and cleaned up HTML result.
+Note: the last method can be combined with [../html-tweak](html-tweak) as a pre-process to map not only styles, but also patterns of formatting appearing in the HTML, into named and classed elements in an enriched and cleaned up HTML result.
 
-When invoked with no method setting, the method inspects the documents for its use of outline levels. If they appear to have been used (more than one such line), that method is applied; if not, the method falls back to "ranked format"
+When invoked with no method setting, the method inspects the documents for its use of outline levels. If they appear to have been used (more than one such line appears), that method is applied; if not, the method falls back to "ranked format"
 
 ## Details
 
@@ -62,8 +62,9 @@ The stylesheet `digest-paragraphs.xsl` is where the action happens in heuristic 
 
 ### Configure your own mapping
 
-A standoff configuration file in XML such as the `config-mockup.xml` file shows how a mapping configuration may be specified, which is able to pick up paragraphs by virtue of either style names, or contents (such as "Introduction" and "Conclusions"). This method offers great power to those who are able, in advance, to constrain the names and usage of Styles in their Word documents (most especially as related to headers).
+A standoff configuration file in XML such as the `config-mockup.xml` file shows how a mapping configuration may be specified, which is able to pick up paragraphs by virtue of either style names, or contents (such as "Introduction" and "Conclusions"). This method offers considerable power (in a relatively simple way) to those who are able, in advance, to constrain the names and usage of Styles in their Word documents (most especially as related to headers).
 
+The rules and semantics of this format are documented with comments in the example. The XSLT make-header-mapper-xslt.xsl produces an XSLT from the configuration file, which is applied to the html file provided as main input. (This subpipeline is implemented in the master XSLT, but not in XProc at time of writing.)
 
 ## Supporting XSLT
 
