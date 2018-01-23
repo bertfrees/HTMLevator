@@ -9,7 +9,7 @@
   
   <xsl:mode on-no-match="shallow-copy"/>
   
-  <xsl:output method="xml" indent="yes" omit-xml-declaration="yes"/>
+  <xsl:output method="xml" indent="no" omit-xml-declaration="yes"/>
   
 <!-- Produces header elements by matching on nominal outline level as given in an xsweet-outline-level CSS pseudo-property
      (treated here with brute force). -->
