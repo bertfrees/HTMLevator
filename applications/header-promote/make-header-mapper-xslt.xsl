@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsl:stylesheet version="3.0"
+<xsl:stylesheet version="2.0"
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns:xs="http://www.w3.org/2001/XMLSchema"
   xmlns:xsw="http://coko.foundation/xsweet"
@@ -11,7 +11,12 @@
   
   <xsl:output indent="yes"/>
   
-  <xsl:mode on-no-match="shallow-copy"/>
+  <xsl:template match="node() | @*">
+    <xsl:copy>
+      <xsl:apply-templates select="node() | @*"/>
+    </xsl:copy>
+  </xsl:template>
+  
   <xsl:template match="/">
     <xsl:apply-templates mode="xslt-map"/>
   </xsl:template>
@@ -39,10 +44,11 @@
   
   <xsl:template mode="xslt-map" priority="2" match="id('header-map')/*">
     <xsl:variable name="match-pattern" as="xs:string">
-      <xsl:value-of expand-text="true">
-      <xsl:text>p</xsl:text>
-      <xsl:for-each select="@class[matches(.,'\S')]">[matches(@class,'{.}')]</xsl:for-each>
-      <xsl:if test="matches(.,'\S')">[matches(.,'{.}')]</xsl:if>
+      <xsl:value-of>
+        <xsl:text>p</xsl:text>
+        <xsl:for-each select="@class[matches(., '\S')]">[matches(@class,'<xsl:value-of select="."
+          />')]</xsl:for-each>
+        <xsl:if test="matches(., '\S')">[matches(.,'<xsl:value-of select="."/>')]</xsl:if>
       </xsl:value-of>
     </xsl:variable>
     <xsw:template match="{$match-pattern}">
