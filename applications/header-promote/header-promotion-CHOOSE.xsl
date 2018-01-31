@@ -152,7 +152,7 @@ declare namespace xsw ="http://coko.foundation/xsweet";
     <!-- don't just copy it, apply it -->
     <xsl:variable name="runtime"
       select="map {
-      'xslt-version'        : if (empty(@version)) then 3.0 else xs:decimal(@version),
+      'xslt-version'        : if (empty(@version)) then 2.0 else xs:decimal(@version),
       'stylesheet-node'     : $xslt,
       'source-node'         : $sourcedoc }"/>
     <!-- The function returns a map; primary results are under 'output'
