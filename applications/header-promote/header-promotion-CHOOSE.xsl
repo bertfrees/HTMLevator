@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet version="3.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsw="http://coko.foundation/xsweet"
+  xpath-default-namespace="http://www.w3.org/1999/xhtml"
   exclude-result-prefixes="#all">
+  
 
   <xsl:output method="xml" indent="no" omit-xml-declaration="yes"/>
 
@@ -46,7 +48,7 @@ declare namespace xsw ="http://coko.foundation/xsweet";
   <xsl:variable name="mapping-spec" as="xs:string?"
     select="$method[matches(., '\.xml$')] ! (if (doc-available(.)) then (.) else ())"/>
 
-  <xsl:variable name="outlined" select="count(p[matches(@style, 'xsweet-outline-level')]) gt 1"/>
+  <xsl:variable name="outlined" select="count(//p[matches(@style, 'xsweet-outline-level')]) gt 1"/>
 
 <!--XSweet mini-pipelining-language semantics:
 
@@ -91,7 +93,7 @@ declare namespace xsw ="http://coko.foundation/xsweet";
         </xsl:when>
         <xsl:when test="$outlined">
           <xsw:transform>outline-headers.xsl</xsw:transform>
-          <xsw:annotate> header promotion by outline levels (by default, from detected outline levels ) </xsw:annotate>
+          <xsw:annotate> header promotion by outline levels (by default, from detected outline levels) </xsw:annotate>
         </xsl:when>
         <xsl:otherwise>
           <!-- value is either 'default' or something else not recognized or a file name -->
