@@ -5,6 +5,10 @@
   xpath-default-namespace="http://www.w3.org/1999/xhtml"
   exclude-result-prefixes="#all">
 
+<!-- XSweet: paragraph property analysis in support of header promotion: header promotion step 1 [3a] -->
+<!-- Input: an HTML typescript file  -->
+<!-- Output: an XML file showing the results of analysis, for input to `make-header-escalator.xsl` -->
+  
   <!-- Indent should really be no, but for testing. -->
   <xsl:output method="xml" indent="yes" omit-xml-declaration="yes"/>
 

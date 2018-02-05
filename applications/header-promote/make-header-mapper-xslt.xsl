@@ -6,6 +6,11 @@
   xmlns="http://www.w3.org/1999/xhtml"
   xpath-default-namespace="http://www.w3.org/1999/xhtml">
 
+  <!-- XSweet: produces header promotion/mapping XSLT from a configuration file (XML), for the 'mapping-based'
+               header promotion pathway [4] -->
+  <!-- Input:  A configuration file such as the included `config-mockup.xml` -->
+  <!-- Output: a copy, with headers promoted according to the mapping -->
+  
   <xsl:namespace-alias stylesheet-prefix="xsw" result-prefix="xsl"/>
   
   

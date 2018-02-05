@@ -6,6 +6,10 @@
   xpath-default-namespace="http://www.w3.org/1999/xhtml"
   exclude-result-prefixes="xs math"
   version="2.0">
+
+  <!-- XSweet: Performs header promotion based on outline level [2] -->
+  <!-- Input:  an HTML Typescript document (wf) -->
+  <!-- Output: a copy, with headers promoted according to outline levels detected on paragraphs -->
   
   <xsl:output method="xml" indent="no" omit-xml-declaration="yes"/>
   

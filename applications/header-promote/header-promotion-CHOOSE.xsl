@@ -4,7 +4,11 @@
   xpath-default-namespace="http://www.w3.org/1999/xhtml"
   exclude-result-prefixes="#all">
   
-
+  <!-- XSweet: top level 'macro XSLT' stylesheet for dynamic dispatch of header promotion logic [1] -->
+  <!-- Input:  an HTML Typescript document (wf) -->
+  <!-- Output: a copy, with headers promoted according to the logic selected -->
+  <!-- Note: runtime parameter `method` may be "ranked-format", "outline-level", or the name of an (XML) configuration file; if the method is not designated the XSLT falls back to "outline-level" (when such headers are detected) or "ranked-format" (when they are not) --> 
+  
   <xsl:output method="xml" indent="no" omit-xml-declaration="yes"/>
 
   <!-- Use this XQuery to get a list of stylesheets called by an XProc pipeline:
