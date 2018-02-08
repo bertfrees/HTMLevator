@@ -4,7 +4,8 @@
   xmlns:math="http://www.w3.org/2005/xpath-functions/math"
   xmlns="http://www.w3.org/1999/xhtml"
   xpath-default-namespace="http://www.w3.org/1999/xhtml"
-  exclude-result-prefixes="xs math"
+  xmlns:xsw="http://coko.foundation/xsweet"
+  exclude-result-prefixes="#all"
   version="2.0">
 
   <!-- XSweet: Performs header promotion based on outline level [2] -->
@@ -23,15 +24,43 @@
 <!-- Produces header elements by matching on nominal outline level as given in an xsweet-outline-level CSS pseudo-property
      (treated here with brute force). -->
   
-  <xsl:template match="p[matches(@style,'xsweet-outline-level')]">
-    <xsl:variable name="outline-spec" select="replace(@style,'^.*xsweet\-outline\-level:\s*','')"/>
+  <xsl:function name="xsw:outline-level" as="xs:integer?">
+    <xsl:param name="who" as="node()"/>
+    <xsl:variable name="outline-spec" select="replace($who/@style,'^.*xsweet\-outline\-level:\s*','')"/>
     <xsl:variable name="outline-level" select="replace($outline-spec,'\D.*$','')"/>
-    <xsl:variable name="level" select="string(number($outline-level) + 1)"/>
-    <xsl:element name="{ concat('h',$level) }" namespace="http://www.w3.org/1999/xhtml">
+    <xsl:if test="$outline-level castable as xs:integer">
+      <xsl:sequence select="xs:integer($outline-level) + 1"/>
+    </xsl:if>
+  </xsl:function>
+  
+  <xsl:variable name="level-map" as="element()*">
+    <xsl:for-each-group select="//body/p[exists(xsw:outline-level(.))]" group-by="xsw:outline-level(.)">
+      <xsl:sort select="xsw:outline-level(.)"/>
+      <xsl:if test="position() le 6">
+        <xsl:element name="h{position()}">
+          <xsl:attribute name="level" select="current-grouping-key()"/>
+          <!--<xsl:apply-templates/>-->
+        </xsl:element>  
+      </xsl:if>  
+    </xsl:for-each-group>
+  </xsl:variable>
+  
+  <!-- Diagnostic .... 
+    
+  <xsl:template match="body">
+    <xsl:copy-of select="$level-map"/>
+  </xsl:template> -->
+  
+  <xsl:template match="p[xsw:outline-level(.) = $level-map/@level]">
+    <xsl:variable name="given-level" select="xsw:outline-level(.)"/>
+    <xsl:variable name="h-level" select="$level-map[@level = $given-level]/local-name()"/>
+    <xsl:element name="{$h-level}" namespace="http://www.w3.org/1999/xhtml">
       <xsl:copy-of select="@*"/>
       <!--<xsl:comment expand-text="true">{ $level }</xsl:comment>-->
       <xsl:apply-templates/>
     </xsl:element>
   </xsl:template>
 
+  
+  
 </xsl:stylesheet>

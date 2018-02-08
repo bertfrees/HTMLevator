@@ -8,8 +8,8 @@
 
 
   <!-- XSweet: produces header promotion XSLT from analyzed (crunched) inputs, for the 'property-based' header promotion pathway [3b] -->
-  <!--  Input: results of running `digest-paragraphs.xsl` on (wf) HTML input -->
-  <!--  Output: an XSLT suitable for running on the same (original) input to produce a copy with headers promoted -->
+  <!-- Input: results of running `digest-paragraphs.xsl` on (wf) HTML input -->
+  <!-- Output: an XSLT suitable for running on the same (original) input to produce a copy with headers promoted -->
   
   <xsl:output indent="yes"/>
   
