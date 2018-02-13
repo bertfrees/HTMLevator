@@ -9,6 +9,11 @@
   exclude-result-prefixes="#all"
   version="3.0">
   
+  <!-- XSweet: Flat HTML becomes well structured HTML. This XSLT, using micropipelines, combines the of `mark-sections.xsl` followed by `nest-sections.xsl`, except here in a single XSLT. (Use this one!) [1] -->
+  <!-- Input: HTML Typescript, with header elements indicating section demarcations -->
+  <!-- Output: the same, except with the sections marked. -->
+  <!-- Note: also marks the result with a comment if headers are found out of expected sequence. -->
+  
   <xsl:output method="xml" indent="no" omit-xml-declaration="yes"/>
   
   <xsl:template match="node() | @*">

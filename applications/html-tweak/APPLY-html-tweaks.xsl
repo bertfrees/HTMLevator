@@ -6,6 +6,11 @@
   <xsl:output method="xml" indent="no" omit-xml-declaration="yes"/>
 
 
+  <!-- XSweet: A generalized HTML modifier with a configurable driver. Use to clean up and improve HTML. [1] -->
+  <!-- Input: an HTML typescript file. -->
+  <!-- Output: a copy, except with tweaks to the HTML as specified by the configuration. -->
+  <!-- Note: runtime parameter `config` enables naming a config file. Its name must be suffixed `xml`. See the file `html-tweak-map.xml` for an example. The configuration provides for matching elements in the HTML based on regularities in 'style' or 'class' assignment. -->
+  
   <xsl:param name="config" as="xs:string" required="yes"/>
 
   <!-- $mapping-spec provides the name of an XML document found at location on $method e.g. method='my-mapping.xml' -->

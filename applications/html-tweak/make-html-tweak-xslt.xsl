@@ -5,6 +5,13 @@
 
   <xsl:output indent="yes"/>
 
+
+  <!-- XSweet: Dynamic XSLT production from configuration XML  -->
+  <!-- Input: An HTML Tweak configuration file such as `html-tweak-map.xml` -->
+  <!-- Output: An XSLT to be applied to HTML Typescript (to achieve the HTML Tweak) -->
+  <!-- Dependency: the XSLTs produced by this also include file `html-tweak-lib.xsl` so that must be available. -->
+  
+
 <!-- Stylesheet transforms a rough transformation spec for HTML
     (affecting @style and @class only) into an XSLT executable.
   

@@ -6,7 +6,12 @@
   xmlns:xs="http://www.w3.org/2001/XMLSchema"
   xmlns:c="http://www.w3.org/ns/xproc-step" version="1.0"
   type="xsw:html-header-promote" name="html-header-promote">
-  
+
+
+  <!-- XSweet: Apply header promotion XSLT chain into a single XProc call -->
+  <!-- Input: an HTML typescript file with no headers  -->
+  <!-- Output: a copy, with headers promoted -->
+<!-- Note: unlike the 'chooser' header promotion macro XSLT, this XProc is wired up to 'property-based' header promotion. -->
   <p:input port="source" primary="true"/>
   
   <p:input port="parameters" kind="parameter"/>

@@ -9,6 +9,8 @@
   
   <xsl:output method="xml" indent="no" omit-xml-declaration="yes"/>
   
+  <!-- XSweet: an example cleanup transformation. -->
+
   <xsl:template match="node() | @*">
     <xsl:copy>
       <xsl:apply-templates select="node() | @*"/>

@@ -8,6 +8,7 @@
   
   exclude-result-prefixes="#all">
 
+  <!-- XSweet: the second half of the section induction two-step. [3] -->
   <xsl:output method="xml" indent="no" omit-xml-declaration="yes"/>
   
   <xsl:template match="node() | @*">

@@ -8,7 +8,15 @@
   exclude-result-prefixes="#all">
   
   <xsl:output method="xml" indent="no" omit-xml-declaration="yes"/>
+
+
+  <!-- XSweet: An *example* of an XSLT produced for the generalized HTML Tweak operation. -->
+  <!-- Input: (presumably) HTML Typescript -->
+  <!-- Output: a copy, with (demo) tweaks -->
+  <!-- Note: This XSLT was produced from (a version of) html-tweak-map.xml as an example of HTML Tweak logic.
+    It is saved here as a demonstration. -->
   
+
 <!-- Stylesheet to rewrite style and class on HTML
      via a template cascade - i.e., more than a single transformation
      can be performed over a single element.

@@ -8,6 +8,7 @@
   
   exclude-result-prefixes="#all">
 
+  <!-- XSweet: half of header promotion: marking the sections -->
   <xsl:output method="xml" indent="no" omit-xml-declaration="yes"/>
   
   <xsl:template match="node() | @*">

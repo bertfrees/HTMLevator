@@ -7,6 +7,9 @@
   xmlns="http://www.w3.org/1999/xhtml"
   exclude-result-prefixes="#all">
   
+  <!-- XSweet: Library for HTML Tweak XSLTs (must be available at runtime) -->
+  <!-- Note: this XSLT isn't run on its own: it is, however, included as a module. HTML Tweak depends on its being available. -->
+  
 <!-- See html-tweak-demo.xsl for an example of how to use this stylesheet fragment. -->
   
   <xsl:template match="node() | @*">
