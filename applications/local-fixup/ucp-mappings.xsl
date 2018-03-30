@@ -13,6 +13,8 @@
 <!-- Input: HTML Typescript -->
 <!-- Output: A copy, with modifications. -->
   
+  <xsl:mode on-no-match="shallow-copy"/>
+  
   <xsl:template match="b | u">
     <i>
       <xsl:copy-of select="@*"/>
