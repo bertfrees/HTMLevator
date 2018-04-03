@@ -25,8 +25,9 @@
   <!-- tlds includes three-letter domain names -->
   <xsl:variable name="tlds"         as="xs:string" expand-text="true">com|org|net|gov|mil|edu|io|foundation</xsl:variable>
   
-  <xsl:variable name="uri-match" as="xs:string" expand-text="true">\.({$country-codes}|{$tlds})</xsl:variable>
-  
+<!-- we think something might be an URL if it includes
+     something not punctuation, followed by dot, followed by country code or TLD -->
+  <xsl:variable name="uri-match" as="xs:string" expand-text="true">\P{{P}}\.({$country-codes}|{$tlds})</xsl:variable>
  
   <xsl:template match="text()">
     <!-- tokenize by splitting around spaces, plus leading punctuation characters  -->
