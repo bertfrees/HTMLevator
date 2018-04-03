@@ -51,6 +51,7 @@
   
   <xsl:character-map name="forTesting">
     <xsl:output-character character="&#x9;" string="TAB"/>
+    <xsl:output-character character="&#x200a;" string="HAIRSPACE"/>
   </xsl:character-map>
   
   <!-- $space is (plain) space and LF, no tab -->
@@ -391,7 +392,11 @@
       <!-- Inserting hair spaces between *certain* pairings now     -->
       <xsw:match replace="&ldquo;&#x200a;&ldquo;">&ldquo;&ldquo;</xsw:match>
       <xsw:match replace="&ldquo;&#x200a;&lsquo;">&ldquo;&lsquo;</xsw:match>
+      <xsw:match replace="&lsquo;&#x200a;&ldquo;">&lsquo;&ldquo;</xsw:match>
+      <xsw:match replace="&lsquo;&#x200a;&lsquo;">&lsquo;&lsquo;</xsw:match>
       <xsw:match replace="&rsquo;&#x200a;&rdquo;">&rsquo;&rdquo;</xsw:match>
+      <xsw:match replace="&rsquo;&#x200a;&rdquo;">&rsquo;&rsquo;</xsw:match>
+      <xsw:match replace="&rdquo;&#x200a;&rsquo;">&rdquo;&rsquo;</xsw:match>
       <xsw:match replace="&rdquo;&#x200a;&rsquo;">&rdquo;&rsquo;</xsw:match>
       
       <!-- brute s/r (from spec)
