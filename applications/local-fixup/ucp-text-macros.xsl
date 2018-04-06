@@ -439,12 +439,12 @@
     <!-- The operation to perform on this text node, if any, depends on what it is  -->
     <xsl:variable name="replacement" expand-text="true">
       <xsl:choose>
-        <!-- if not in an em, but following an em, we remove the initial punctuation...   -->
-        <xsl:when test="empty($original/ancestor::em) and exists($prev/ancestor::em)">
+        <!-- if not inside inline emphasis, we remove the initial punctuation...   -->
+        <xsl:when test="empty($original/(ancestor::em|ancestor::b|ancestor::i)) and exists($prev/(ancestor::em|ancestor::b|ancestor::i))">
           <xsw:match>^{$puncts}</xsw:match>
         </xsl:when>
-        <!-- if we are inside an 'em', we acquire following punctuation   -->
-        <xsl:when test="exists($original/ancestor::em) and empty($next/ancestor::em)">
+        <!-- if we are inside emphasis, we acquire following punctuation   -->
+        <xsl:when test="exists($original/(ancestor::em|ancestor::b|ancestor::i)) and empty($next/(ancestor::em|ancestor::b|ancestor::i))">
           <xsl:variable name="p" select="replace($next, ('^(' || $puncts || ').*$'), '$1')"/>
           <xsw:match replace="$1{$p}">(.)$</xsw:match>
         </xsl:when>
