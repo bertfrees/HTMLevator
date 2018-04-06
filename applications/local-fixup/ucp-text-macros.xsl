@@ -396,7 +396,7 @@
       <xsw:match replace="&lsquo;&#x200a;&lsquo;">&lsquo;&lsquo;</xsw:match>
       <xsw:match replace="&rsquo;&#x200a;&rdquo;">&rsquo;&rdquo;</xsw:match>
       <xsw:match replace="&rsquo;&#x200a;&rdquo;">&rsquo;&rsquo;</xsw:match>
-      <xsw:match replace="&rdquo;&#x200a;&rsquo;">&rdquo;&rsquo;</xsw:match>
+      <xsw:match replace="&rdquo;&#x200a;&rsquo;">&rdquo;&rdquo;</xsw:match>
       <xsw:match replace="&rdquo;&#x200a;&rsquo;">&rdquo;&rsquo;</xsw:match>
       
       <!-- brute s/r (from spec)
