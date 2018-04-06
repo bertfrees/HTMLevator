@@ -21,5 +21,47 @@
       <xsl:apply-templates/>
     </i>
   </xsl:template>
-   
+  
+  <xsl:template match="key('elements-by-propertyValue','font-weight: bold')[self::p] |
+                       key('elements-by-propertyValue','text-decoration: underline')[self::p]">
+    <xsl:copy>
+      <xsl:copy-of select="@* except @style"/>
+      <xsl:call-template name="tweakStyle">
+        <xsl:with-param name="removePropertyValues" select="'font-weight: bold','text-decoration: underline'"/>
+        <xsl:with-param name="addPropertyValues" select="'font-style: italic'"/>
+      </xsl:call-template>
+    </xsl:copy>
+  </xsl:template>
+  
+  <xsl:key name="elements-by-propertyValue" match="*[matches(@style,'\S')]" use="xsw:style-propertyValues(.)"/>
+  
+  <!-- template copied from ../html-tweak/html-tweak-lib.xsl -->
+  
+  <xsl:function name="xsw:style-propertyValues" as="xs:string*">
+    <!-- Returns 'font-family: Helvetica','font-size: 10pt' whatever
+         properties are defined on @style -->
+    <xsl:param name="e" as="element()"/>
+    <xsl:sequence select="tokenize($e/@style/normalize-space(.),'\s*;\s*')"/>
+  </xsl:function>
+  
+  <xsl:template name="tweakStyle">
+    <!-- $removeProperties are expected as 'font-size', 'text-indent'  -->
+    <!-- $addPropertyValues are expected as 'font-size: 12pt', 'text-indent: 36pt' -->
+    <xsl:param name="removePropertyValues" select="()" as="xs:string*"/>
+    <xsl:param name="addPropertyValues"    select="()" as="xs:string*"/>
+    <xsl:variable name="oldPropertyValues" select="xsw:style-propertyValues(.)"/>
+    <xsl:variable name="newPropertyValues"
+      select="$oldPropertyValues[not(. = $removePropertyValues)],
+      $addPropertyValues"/>
+    <xsl:if test="exists($newPropertyValues)">
+      <xsl:attribute name="style">
+        <xsl:for-each select="$newPropertyValues">
+          <xsl:sort data-type="text"/>
+          <xsl:if test="position() gt 1">; </xsl:if>
+          <xsl:value-of select="."/>
+        </xsl:for-each>
+      </xsl:attribute>
+    </xsl:if>
+  </xsl:template>
+  
 </xsl:stylesheet>
