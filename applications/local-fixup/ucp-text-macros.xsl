@@ -134,7 +134,7 @@
       <match replace="B.C.">B\.&#xA0;C\.</match>
       
 <!-- Punctuation-related cleanup - spaces before certain punctuation signs -    -->
-      <match replace="$1">\s+([,;:!\?\)\]\}}])</match>
+      <match replace="$1">\s+([,;:!\?\)\]\.\}}])</match>
       
       <!-- subsequence to perform all quotation mark munging -->
       <munge-quotes/>
@@ -440,11 +440,11 @@
     <xsl:variable name="replacement" expand-text="true">
       <xsl:choose>
         <!-- if not inside inline emphasis, we remove the initial punctuation...   -->
-        <xsl:when test="empty($original/(ancestor::em|ancestor::b|ancestor::i)) and exists($prev/(ancestor::em|ancestor::b|ancestor::i))">
+        <xsl:when test="empty($original/(ancestor::em|ancestor::b|ancestor::i)) and exists($prev/(ancestor::em|ancestor::b|ancestor::i|ancestor::u))">
           <xsw:match>^{$puncts}</xsw:match>
         </xsl:when>
         <!-- if we are inside emphasis, we acquire following punctuation   -->
-        <xsl:when test="exists($original/(ancestor::em|ancestor::b|ancestor::i)) and empty($next/(ancestor::em|ancestor::b|ancestor::i))">
+        <xsl:when test="exists($original/(ancestor::em|ancestor::b|ancestor::i)) and empty($next/(ancestor::em|ancestor::b|ancestor::i|ancestor::u))">
           <xsl:variable name="p" select="replace($next, ('^(' || $puncts || ').*$'), '$1')"/>
           <xsw:match replace="$1{$p}">(.)$</xsw:match>
         </xsl:when>
