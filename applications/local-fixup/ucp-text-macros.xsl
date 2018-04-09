@@ -435,20 +435,29 @@
     
     <xsl:variable name="prev" select="$original/preceding::text()[1][xsw:container(.) is xsw:container($original)]"/>
     <xsl:variable name="next" select="$original/following::text()[1][xsw:container(.) is xsw:container($original)]"/>
+    
+    
   
     <!-- The operation to perform on this text node, if any, depends on what it is  -->
     <xsl:variable name="replacement" expand-text="true">
+      <xsl:variable name="emphasized"      as="xs:boolean"
+        select="exists($original/(ancestor::em|ancestor::b|ancestor::i|ancestor::u))"/>
+      <xsl:variable name="prev-emphasized" as="xs:boolean"
+        select="exists($prev/    (ancestor::em|ancestor::b|ancestor::i|ancestor::u))"/>
+      <xsl:variable name="next-emphasized" as="xs:boolean"
+        select="exists($next/    (ancestor::em|ancestor::b|ancestor::i|ancestor::u))"/>
       <xsl:choose>
-        <!-- if not inside inline emphasis, we remove the initial punctuation...   -->
-        <xsl:when test="empty($original/(ancestor::em|ancestor::b|ancestor::i)) and exists($prev/(ancestor::em|ancestor::b|ancestor::i|ancestor::u))">
+        <!-- if following emphasis but not emphasized, we remove initial punctuation...   -->
+        <xsl:when test="not($emphasized) and $prev-emphasized">
           <xsw:match>^{$puncts}</xsw:match>
         </xsl:when>
-        <!-- if we are inside emphasis, we acquire following punctuation   -->
-        <xsl:when test="exists($original/(ancestor::em|ancestor::b|ancestor::i)) and empty($next/(ancestor::em|ancestor::b|ancestor::i|ancestor::u))">
+        <!-- if emphasized but the next bit of text is not emphasized, we acquire its leading punctuation  -->
+        <xsl:when test="$emphasized and not($next-emphasized)">
           <xsl:variable name="p" select="replace($next, ('^(' || $puncts || ').*$'), '$1')"/>
           <xsw:match replace="$1{$p}">(.)$</xsw:match>
         </xsl:when>
         <xsl:otherwise>
+          <!-- without the dummy match, we will drop the content - -->
           <xsw:match/>     
         </xsl:otherwise>
       </xsl:choose>
