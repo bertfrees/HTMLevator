@@ -30,6 +30,7 @@
         <xsl:with-param name="removePropertyValues" select="'font-weight: bold','text-decoration: underline'"/>
         <xsl:with-param name="addPropertyValues" select="'font-style: italic'"/>
       </xsl:call-template>
+      <xsl:apply-templates/>
     </xsl:copy>
   </xsl:template>
   
