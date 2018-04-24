@@ -132,14 +132,15 @@
       <match replace="P.M.">P\.&#xA0;M\.</match>
       <match replace="A.D.">A\.&#xA0;D\.</match>
       <match replace="B.C.">B\.&#xA0;C\.</match>
-      
-<!-- Punctuation-related cleanup - spaces before certain punctuation signs -    -->
-      <match replace="$1">\s+([,;:!\?\)\]\.\}}])</match>
-      
+
       <!-- subsequence to perform all quotation mark munging -->
       <munge-quotes/>
       
-      <!-- slide punct moves punctuation around node boundaries -->
+      
+      <!-- Punctuation-related cleanup - spaces before certain punctuation signs -    -->
+      <match replace="$1">\s+([,;:!\}}\?\)\]\.])</match>
+      
+      <!-- slide punct moves punctuation around element boundaries -->
       <slide-punct/>
     </sequence>
   </xsl:variable>
@@ -198,7 +199,7 @@
     <!-- permits empty xsw:match as a no-op -->
     <xsl:choose>
       <xsl:when test="matches(.,'\S')">
-        <xsl:sequence select="replace($str,string(.),(@replace,'')[1])"/>
+        <xsl:sequence select="replace($str,string(.),(@replace,'')[1], 's')"/>
       </xsl:when>
       <xsl:otherwise>
         <xsl:sequence select="$str"/>
@@ -217,7 +218,7 @@
       <xsl:when test="matches($after,$after-regex)">
         <!--<xsl:sequence select="$str"/> ... <xsl:sequence select="$regex"/>-->
         <!--<xsl:sequence select="string(@replace)"/>-->
-        <xsl:sequence select="replace($str,$regex,(@replace,'')[1])"/>    
+        <xsl:sequence select="replace($str,$regex,(@replace,'')[1], 's')"/>    
       </xsl:when>
       <xsl:otherwise>
         <xsl:sequence select="$str"/>
@@ -236,7 +237,7 @@
       <xsl:when test="matches($fore,$fore-regex)">
         <!--<xsl:sequence select="$str"/> ... <xsl:sequence select="$regex"/>-->
         <!--<xsl:sequence select="string(@replace)"/>-->
-        <xsl:sequence select="replace($str,$regex,(@replace,'')[1])"/>    
+        <xsl:sequence select="replace($str,$regex,(@replace,'')[1], 's')"/>    
       </xsl:when>
       <xsl:otherwise>
         <xsl:sequence select="$str"/>
@@ -257,7 +258,7 @@
       <xsl:when test="matches($fore,$fore-regex) and matches($after,$after-regex)">
         <!--<xsl:sequence select="$str"/> ... <xsl:sequence select="$regex"/>-->
         <!--<xsl:sequence select="string(@replace)"/>-->
-        <xsl:sequence select="replace($str,$regex,(@replace,'')[1])"/>    
+        <xsl:sequence select="replace($str,$regex,(@replace,'')[1], 's')"/>    
       </xsl:when>
       <xsl:otherwise>
         <xsl:sequence select="$str"/>
@@ -265,7 +266,8 @@
     </xsl:choose>
   </xsl:template>
   
-  <!--Splice is a generalize match that looks across element boundaries. Its prae and post element children are optional. -->
+  <!--Splice is a generalized match that looks across element boundaries. Its prae and post element children are optional. -->
+  
   <xsl:template match="xsw:splice" xpath-default-namespace="http://coko.foundation/xsweet">
     <!-- Inside this template, path 'prae' amounts to 'xsw:prae'   -->
     <xsl:param name="original" required="yes" as="text()"/>
@@ -294,28 +296,27 @@
       </xsl:when>
       <xsl:when test="matches($ahead, (prae || '$')) and matches($after, ('^' || post))">
         <xsl:sequence
-          select=" replace($str,( '(' || prae || ')' || quid || '$'), ('$1' || $replacement ))
-                => replace(     ('^' || quid || '(' || post || ')'), ($replacement || '$1' ))
-                => replace(     $full, $full-replace)"
+          select=" replace($str,( '(' || prae || ')' || quid || '$'), ('$1' || $replacement ), 's')
+          => replace(     ('^' || quid || '(' || post || ')'), ($replacement || '$1' ), 's')
+          => replace(     $full, $full-replace, 's')"
         />
       </xsl:when>
       <xsl:when test="matches($ahead, (prae || '$'))">
         <xsl:sequence
-          select=" replace($str,('^' || quid || '(' || post || ')'),($replacement || '$1' ))
-                => replace(     $full, $full-replace)"
+          select=" replace($str,('^' || quid || '(' || post || ')'),($replacement || '$1' ), 's')
+          => replace(     $full, $full-replace, 's')"
         />
       </xsl:when>
       <xsl:when test="matches($after, ('^' || post))">
         <xsl:sequence
-          select=" replace($str,( '(' || prae || ')' || quid || '$'),('$1' || $replacement ))
-                => replace(     $full, $full-replace)"
+          select=" replace($str,( '(' || prae || ')' || quid || '$'),('$1' || $replacement, 's' ))
+          => replace(     $full, $full-replace, 's')"
         />
       </xsl:when>
       <xsl:otherwise>
-        <xsl:sequence select="replace($str, $full, $full-replace)"/>
+        <xsl:sequence select="replace($str, $full, $full-replace, 's')"/>
       </xsl:otherwise>
     </xsl:choose>
-
   </xsl:template>
     
   <xsl:template match="xsw:match-first">
@@ -324,7 +325,7 @@
     <xsl:variable name="where" select="$original/xsw:container(.)"/>
     <xsl:choose>
       <xsl:when test="$original is $where/descendant::text()[1]">
-        <xsl:sequence select="replace($str,string(.),(@replace,'')[1])"/>
+        <xsl:sequence select="replace($str,string(.),(@replace,'')[1], 's')"/>
       </xsl:when>
       <xsl:otherwise>
         <xsl:sequence select="$str"/>
@@ -338,7 +339,7 @@
     <xsl:variable name="where" select="$original/xsw:container(.)"/>
     <xsl:choose>
       <xsl:when test="$original is $where/descendant::text()[last()]">
-        <xsl:sequence select="replace($str,string(.),(@replace,'')[1])"/>
+        <xsl:sequence select="replace($str,string(.),(@replace,'')[1], 's')"/>
       </xsl:when>
       <xsl:otherwise>
         <xsl:sequence select="$str"/>
@@ -424,7 +425,8 @@
     </xsl:apply-templates>
   </xsl:template>
   
-  <xsl:variable name="puncts">[,\.:;\?!]</xsl:variable>
+  <!--<xsl:variable name="puncts">[,\.:;\?!]</xsl:variable>
+  <xsl:variable name="not-puncts">[^,\.:;\?!]</xsl:variable>-->
   
 <!-- This utility performs a "punctuation slide" around 'em' element boundaries - any punctuation given in $puncts
      is removed from text directly following emphasis, and into text inside emphasis when it appears directly after it. -->
@@ -436,8 +438,6 @@
     <xsl:variable name="prev" select="$original/preceding::text()[1][xsw:container(.) is xsw:container($original)]"/>
     <xsl:variable name="next" select="$original/following::text()[1][xsw:container(.) is xsw:container($original)]"/>
     
-    
-  
     <!-- The operation to perform on this text node, if any, depends on what it is  -->
     <xsl:variable name="replacement" expand-text="true">
       <xsl:variable name="emphasized"      as="xs:boolean"
@@ -449,15 +449,15 @@
       <xsl:choose>
         <!-- if following emphasis but not emphasized, we remove initial punctuation...   -->
         <xsl:when test="not($emphasized) and $prev-emphasized">
-          <xsw:match>^{$puncts}</xsw:match>
+          <xsw:match>^\p{{P}}</xsw:match>
         </xsl:when>
         <!-- if emphasized but the next bit of text is not emphasized, we acquire its leading punctuation  -->
         <xsl:when test="$emphasized and not($next-emphasized)">
-          <xsl:variable name="p" select="replace($next, ('^(' || $puncts || ').*$'), '$1')"/>
-          <xsw:match replace="$1{$p}">(.)$</xsw:match>
+          <xsl:variable name="p" select="replace($next, '\P{P}.*$', '', 's')"/>
+          <xsw:value-of>{ $str }{ $p }</xsw:value-of>
         </xsl:when>
         <xsl:otherwise>
-          <!-- without the dummy match, we will drop the content - -->
+          <!-- without the dummy match, we will drop the content, so we include it - -->
           <xsw:match/>     
         </xsl:otherwise>
       </xsl:choose>
@@ -475,12 +475,15 @@
     <xsl:sequence select="$str"/>
   </xsl:template>
   
+  <xsl:template match="xsw:value-of">
+    <xsl:sequence select="string(.)"/>
+  </xsl:template>
+  
   <xsl:template match="xsw:message">
     <xsl:param name="str" required="yes" as="xs:string"/>
     <xsl:message>
       <xsl:value-of select="."/>
     </xsl:message>
-    <xsl:sequence select="$str"/>
   </xsl:template>
   
   <!-- returns the closest ancestor p or p-like (block) object -->
