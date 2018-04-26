@@ -34,7 +34,7 @@
   </xsl:function>
   
   <xsl:variable name="level-map" as="element()*">
-    <xsl:for-each-group select="//body/p[exists(xsw:outline-level(.))]" group-by="xsw:outline-level(.)">
+    <xsl:for-each-group select="//body//p[exists(xsw:outline-level(.))]" group-by="xsw:outline-level(.)">
       <xsl:sort select="xsw:outline-level(.)"/>
       <xsl:if test="position() le 6">
         <xsl:element name="h{position()}">
@@ -45,11 +45,12 @@
     </xsl:for-each-group>
   </xsl:variable>
   
-  <!-- Diagnostic .... 
+   <!--Diagnostic .... -->
     
-  <xsl:template match="body">
+  <!--<xsl:template match="body">
     <xsl:copy-of select="$level-map"/>
-  </xsl:template> -->
+    <xsl:next-match/>
+  </xsl:template>--> 
   
   <xsl:template match="p[xsw:outline-level(.) = $level-map/@level]">
     <xsl:variable name="given-level" select="xsw:outline-level(.)"/>
