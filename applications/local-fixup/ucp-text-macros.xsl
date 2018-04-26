@@ -309,7 +309,7 @@
       </xsl:when>
       <xsl:when test="matches($after, ('^' || post))">
         <xsl:sequence
-          select=" replace($str,( '(' || prae || ')' || quid || '$'),('$1' || $replacement, 's' ))
+          select=" replace($str,( '(' || prae || ')' || quid || '$'),('$1' || $replacement), 's')
           => replace(     $full, $full-replace, 's')"
         />
       </xsl:when>
