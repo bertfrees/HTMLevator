@@ -34,7 +34,9 @@
   </xsl:function>
   
   <xsl:variable name="level-map" as="element()*">
-    <xsl:for-each-group select="//body//p[exists(xsw:outline-level(.))]" group-by="xsw:outline-level(.)">
+    <xsl:for-each-group select="//body/p[exists(xsw:outline-level(.))]
+      | //body/div[@class='docx-body']/p[exists(xsw:outline-level(.))]"
+      group-by="xsw:outline-level(.)">
       <xsl:sort select="xsw:outline-level(.)"/>
       <xsl:if test="position() le 6">
         <xsl:element name="h{position()}">
