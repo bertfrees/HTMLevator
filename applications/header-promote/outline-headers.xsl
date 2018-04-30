@@ -20,10 +20,6 @@
     </xsl:copy>
   </xsl:template>
   
-  
-<!-- Produces header elements by matching on nominal outline level as given in an xsweet-outline-level CSS pseudo-property
-     (treated here with brute force). -->
-  
   <xsl:function name="xsw:outline-level" as="xs:integer?">
     <xsl:param name="who" as="node()"/>
     <xsl:variable name="outline-spec" select="replace($who/@style,'^.*xsweet\-outline\-level:\s*','')"/>
@@ -33,6 +29,19 @@
     </xsl:if>
   </xsl:function>
   
+<!-- Produces an index relating given outline levels (extant in the document)
+     to header levels h1-h6 ... including only the outline levels given.
+
+     So one document could have
+       <h1 level="0"/><h2 level="1"/><h3 level="2"/>
+     while another has
+       <h1 level="1"/><h2 level="3"/><h1 level="4"/>
+       (in a document with no outline level '0' or '2')
+     
+     The result is used to map from the source, resulting
+     in the highest outline levels actually given, becoming h1-h6.
+-->
+
   <xsl:variable name="level-map" as="element()*">
     <xsl:for-each-group select="//body/p[exists(xsw:outline-level(.))]
       | //body/div[@class='docx-body']/p[exists(xsw:outline-level(.))]"
